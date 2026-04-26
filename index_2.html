@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alvin & Janice - RSVP</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💍</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,400;1,500&family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f1ec;
+            color: #1A1A1A;
+            overflow-x: hidden;
+        }
+
+        a { color: inherit; }
+
+        /* ============================================
+           GLOBAL TOP NAV — fixed, fades in during Phase 0
+           ============================================ */
+        nav.top-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 44px;
+            opacity: 0;
+            transition: opacity 0.2s linear;
+            pointer-events: none;
+        }
+        nav.top-nav.is-visible { pointer-events: auto; }
+        .top-nav .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .top-nav .links { display: flex; gap: 36px; }
+        .top-nav .links a {
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: 400;
+            transition: opacity 0.2s ease;
+        }
+        .top-nav .links a:hover { opacity: 0.55; }
+        .rsvp-pill {
+            background: #1A1A1A;
+            color: #f3f1ec;
+            padding: 11px 24px;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+        }
+        .rsvp-pill:hover { opacity: 0.82; }
+
+        @media (max-width: 768px) {
+            nav.top-nav { padding: 16px 20px; }
+            .top-nav .links { display: none; }
+            .top-nav .logo { font-size: 1.1rem; }
+            .rsvp-pill { padding: 9px 18px; font-size: 0.68rem; letter-spacing: 1.4px; }
+        }
+
+        /* ============================================
+           PHASE 0 — Full-screen hero shrink + scatter blocks
+           ============================================ */
+        .intro-runway {
+            position: relative;
+            height: 200vh;
+            width: 100%;
+        }
+        .sticky-intro-view {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f3f1ec;
+        }
+
+        /* The full-bleed hero photo that shrinks into a card */
+        .main-hero-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            background-image: url('img/banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 0;
+            overflow: hidden;
+            z-index: 10;
+            will-change: width, height, border-radius;
+        }
+        .main-hero-container::after {
+            /* subtle vignette so script text is legible at the bottom */
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom,
+                rgba(0,0,0,0) 55%,
+                rgba(0,0,0,0.35) 100%);
+            pointer-events: none;
+        }
+
+        .hero-script-text {
+            position: absolute;
+            left: 50%;
+            bottom: 9%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 2px 24px rgba(0,0,0,0.4);
+            z-index: 2;
+            width: 92%;
+            will-change: opacity;
+        }
+        .hero-script-text h1 {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: clamp(3.5rem, 11vw, 10rem);
+            line-height: 1;
+            letter-spacing: 2px;
+        }
+        .hero-script-text .hero-scroll-cue {
+            display: block;
+            margin-top: 22px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            font-weight: 400;
+            opacity: 0.9;
+            animation: cue-bounce 2.4s ease-in-out infinite;
+        }
+
+        /* Scatter blocks that frame the shrunken hero */
+        .intro-scatter-block {
+            position: absolute;
+            border-radius: 18px;
+            z-index: 15;
+            will-change: transform;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.10);
+        }
+        .block-tl {
+            width: 280px;  height: 300px;
+            top: 6vh;      left: 3vw;
+            background-color: #b8917a;
+            transform: translateX(-160%);
+        }
+        .block-bl {
+            width: 240px;  height: 260px;
+            top: 50vh;     left: 6vw;
+            background-color: #6f7a5e;
+            transform: translateX(-160%);
+        }
+        .block-tr {
+            width: 220px;  height: 280px;
+            top: 22vh;     right: 3vw;
+            background-color: #c9b896;
+            transform: translateX(160%);
+        }
+        .block-br {
+            width: 240px;  height: 220px;
+            top: 60vh;     right: 5vw;
+            background-color: #8a7461;
+            transform: translateX(160%);
+        }
+
+        @media (max-width: 900px) {
+            .intro-scatter-block { display: none; }
+        }
+
+        /* ============================================
+           PHASE 1 — Pinned text hero with polaroid scatter
+           ============================================ */
+        .hero-runway {
+            position: relative;
+            height: 300vh;
+            width: 100%;
+        }
+        .sticky-view {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f3f1ec;
+        }
+
+        .hero-text-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            padding: 0 24px;
+            text-align: center;
+            z-index: 10;
+        }
+        .lead-in {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(1rem, 1.6vw, 1.5rem);
+            color: #1A1A1A;
+            letter-spacing: 0.4px;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+        .big-display {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: clamp(3rem, 17vw, 17rem);
+            line-height: 0.92;
+            letter-spacing: -0.035em;
+            color: #1A1A1A;
+            white-space: nowrap;
+        }
+
+        .polaroid-container {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            pointer-events: none;
+        }
+        .polaroid-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            background-color: #ffffff;
+            padding: 16px 16px 60px;
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.20),
+                0 10px 24px rgba(0, 0, 0, 0.10);
+            will-change: transform;
+            transform: translate(-50%, -50%) translate(0, 100vh) rotate(0deg);
+        }
+        .polaroid-card img {
+            display: block;
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+
+        .scroll-cue-bottom {
+            position: absolute;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            z-index: 30;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #1A1A1A;
+            opacity: 0.55;
+            transition: opacity 0.4s ease;
+            animation: cue-bounce 2.4s ease-in-out infinite;
+        }
+        .scroll-cue-bottom.hide { opacity: 0; pointer-events: none; }
+
+        @keyframes cue-bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50%      { transform: translate(-50%, 6px); }
+        }
+
+        @media (max-width: 900px) {
+            .big-display { font-size: clamp(2.5rem, 16vw, 9rem); white-space: normal; }
+        }
+        @media (max-width: 768px) {
+            .polaroid-card { width: 200px; padding: 12px 12px 44px; }
+            .polaroid-card img { height: 240px; }
+        }
+
+        /* ============================================
+           PHASE 2 — Date reveal
+           ============================================ */
+        .date-runway {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f3f1ec;
+            padding: 0 24px;
+        }
+        .date-reveal {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(24px) scale(0.96);
+            transition: opacity 1.4s ease, transform 1.4s ease;
+        }
+        .date-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .date-prelude {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+            color: #1A1A1A;
+            letter-spacing: 0.4px;
+            margin-bottom: 28px;
+        }
+        .date-headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: clamp(2.5rem, 9vw, 7rem);
+            letter-spacing: 0.06em;
+            line-height: 1;
+            color: #1A1A1A;
+        }
+        .date-sub {
+            margin-top: 28px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #1A1A1A;
+            opacity: 0.6;
+        }
+
+        /* ============================================
+           PHASE 3 — RSVP form
+           ============================================ */
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 80px 20px 100px;
+            background-color: #f3f1ec;
+            position: relative;
+        }
+        .invitation-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            text-align: center;
+            transition: all 0.6s ease;
+        }
+        .customization-section {
+            padding: 30px 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .character-illustration {
+            width: 100%;
+            max-width: 260px;
+            height: auto;
+            mix-blend-mode: multiply;
+            transition: all 0.6s ease;
+        }
+        .header-content { padding: 10px 30px 5px; }
+        .header-content h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.4rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #1A1A1A;
+        }
+        .header-content p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+        .divider {
+            width: 40px;
+            height: 1px;
+            background-color: #dcdcdc;
+            margin: 18px auto;
+        }
+        .rsvp-form { padding: 0 40px 40px; text-align: left; }
+        .name-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .name-row .form-group { flex: 1; margin-bottom: 0; }
+        @media (max-width: 400px) {
+            .name-row { flex-direction: column; }
+            .name-row .form-group { margin-bottom: 15px; }
+            .name-row .form-group:last-child { margin-bottom: 0; }
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 6px;
+            color: #444;
+        }
+        .form-group .sub-label {
+            display: block;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 6px;
+            margin-top: -4px;
+            line-height: 1.3;
+        }
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            background-color: #fff;
+            color: #1A1A1A;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, select:focus {
+            border-color: #a39171;
+        }
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 10px auto;
+        }
+        .radio-group { display: flex; gap: 15px; }
+        .radio-option { flex: 1; position: relative; }
+        .radio-option input[type="radio"] { display: none; }
+        .radio-label {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #666;
+            background-color: #fff;
+        }
+        .radio-option input[type="radio"]:checked + .radio-label {
+            background-color: #1A1A1A;
+            color: #fff;
+            border-color: #1A1A1A;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 13px;
+            background-color: #1A1A1A;
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            margin-top: 10px;
+        }
+        button[type="submit"]:hover { opacity: 0.85; }
+        button[type="submit"]:disabled { opacity: 0.5; cursor: default; }
+        #success-message {
+            display: none;
+            text-align: center;
+            padding: 0 20px 40px;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #a39171;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== Global fixed nav ===== -->
+    <nav class="top-nav" id="topNav">
+        <div class="logo">Alvin &amp; Janice</div>
+        <div class="links">
+            <a href="#">Travel</a>
+            <a href="#">Registry</a>
+            <a href="#">FAQ</a>
+        </div>
+        <a href="#rsvp" class="rsvp-pill">RSVP — July 15</a>
+    </nav>
+
+    <!-- ===== PHASE 0: full-bleed hero shrink + scatter blocks ===== -->
+    <div class="intro-runway" id="introRunway">
+        <div class="sticky-intro-view">
+
+            <div class="intro-scatter-block block-tl"></div>
+            <div class="intro-scatter-block block-bl"></div>
+            <div class="intro-scatter-block block-tr"></div>
+            <div class="intro-scatter-block block-br"></div>
+
+            <div class="main-hero-container" id="mainHero">
+                <div class="hero-script-text" id="heroScriptText">
+                    <h1>alvin &amp; janice</h1>
+                    <span class="hero-scroll-cue">SCROLL</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== PHASE 1: pinned text + polaroid scatter ===== -->
+    <div class="hero-runway" id="heroRunway">
+        <div class="sticky-view">
+
+            <div class="hero-text-center">
+                <p class="lead-in">you're cordially invited to the adventure that is...</p>
+                <h1 class="big-display">our love story</h1>
+            </div>
+
+            <div class="polaroid-container">
+                <div class="polaroid-card" data-end-x="-24" data-end-y="-6"  data-end-rot="-14" data-start-p="0.00" data-end-p="0.55">
+                    <img src="img/banner.jpg" alt="">
+                </div>
+                <div class="polaroid-card" data-end-x="22"  data-end-y="-2"  data-end-rot="11"  data-start-p="0.10" data-end-p="0.65">
+                    <img src="img/fiona.jpg" alt="">
+                </div>
+                <div class="polaroid-card" data-end-x="-12" data-end-y="12"  data-end-rot="-7"  data-start-p="0.20" data-end-p="0.75">
+                    <img src="img/banner2.jpg" alt="">
+                </div>
+                <div class="polaroid-card" data-end-x="16"  data-end-y="13"  data-end-rot="8"   data-start-p="0.30" data-end-p="0.85">
+                    <img src="img/emily.JPG" alt="">
+                </div>
+                <div class="polaroid-card" data-end-x="0"   data-end-y="2"   data-end-rot="-3"  data-start-p="0.40" data-end-p="1.00">
+                    <img src="img/banner3.jpg" alt="">
+                </div>
+            </div>
+
+            <div class="scroll-cue-bottom" id="phase1Cue">scroll</div>
+
+        </div>
+    </div>
+
+    <!-- ===== PHASE 2: date reveal ===== -->
+    <section class="date-runway" id="dateRunway">
+        <div class="date-reveal" id="dateReveal">
+            <p class="date-prelude">so please join us...</p>
+            <h2 class="date-headline">JULY 15, 2026</h2>
+            <p class="date-sub">San Francisco Bay Area</p>
+        </div>
+    </section>
+
+    <!-- ===== PHASE 3: RSVP form ===== -->
+    <section id="rsvp" class="form-wrapper">
+        <div class="invitation-container" id="main-container">
+
+            <div class="customization-section">
+                <img id="hero-image"
+                     src="https://cdn.imweb.me/thumbnail/20250314/44a43a20e62ce.gif"
+                     alt="Wedding Couple"
+                     class="character-illustration">
+            </div>
+
+            <div class="header-content">
+                <h1>Alvin &amp; Janice</h1>
+                <p>We are so excited to celebrate our special day with you. Please let us know if you can make it.</p>
+            </div>
+
+            <div class="divider" id="form-divider"></div>
+
+            <form class="rsvp-form" id="rsvpForm">
+
+                <div class="name-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Your email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="numGuests">Number of Guests</label>
+                    <select id="numGuests" name="numGuests" required>
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Will you attend the ceremony?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="ceremonyYes" name="attendCeremony" value="Yes" required>
+                            <label class="radio-label" for="ceremonyYes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="ceremonyNo" name="attendCeremony" value="No">
+                            <label class="radio-label" for="ceremonyNo">No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Will you attend the dinner?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="dinnerYes" name="attendDinner" value="Yes" required>
+                            <label class="radio-label" for="dinnerYes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="dinnerNo" name="attendDinner" value="No">
+                            <label class="radio-label" for="dinnerNo">No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="luckyDraw">Lucky Draw Seed Phrase</label>
+                    <span class="sub-label">If you want to participate in a lucky draw to win a prize in the dinner, pick a random phrase from the list below!</span>
+                    <select id="luckyDraw" name="luckyDraw">
+                        <option value="" disabled selected>Select a city</option>
+                        <option value="Sunnyvale">Sunnyvale</option>
+                        <option value="San Francisco">San Francisco</option>
+                        <option value="Menlo Park">Menlo Park</option>
+                        <option value="Fremont">Fremont</option>
+                        <option value="Oakland">Oakland</option>
+                        <option value="San Jose">San Jose</option>
+                        <option value="Palo Alto">Palo Alto</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submitBtn">Send RSVP</button>
+            </form>
+
+            <div id="success-message">
+                <p>Thank you!</p>
+                <p style="font-size: 1rem; color: #666; font-weight: 400; margin-top: 10px;">Your RSVP has been safely recorded.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const clamp01 = v => v < 0 ? 0 : (v > 1 ? 1 : v);
+        const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+        /* ============================================
+           Element references
+           ============================================ */
+        const topNav      = document.getElementById('topNav');
+        const introRunway = document.getElementById('introRunway');
+        const mainHero    = document.getElementById('mainHero');
+        const heroScript  = document.getElementById('heroScriptText');
+        const introBlocks = Array.from(document.querySelectorAll('.intro-scatter-block'));
+        const blockDirs   = ['left', 'left', 'right', 'right'];
+
+        const heroRunway  = document.getElementById('heroRunway');
+        const phase1Cue   = document.getElementById('phase1Cue');
+        const cards = Array.from(document.querySelectorAll('.polaroid-card')).map(el => ({
+            el,
+            endX:    parseFloat(el.dataset.endX),
+            endY:    parseFloat(el.dataset.endY),
+            endRot:  parseFloat(el.dataset.endRot),
+            startP:  parseFloat(el.dataset.startP),
+            endP:    parseFloat(el.dataset.endP),
+        }));
+
+        /* ============================================
+           Layout measurements
+           ============================================ */
+        let viewportH    = 0;
+        let introTop     = 0, introHeight = 0;
+        let heroTop      = 0, heroHeight  = 0;
+        let ticking      = false;
+
+        function measure() {
+            viewportH = window.innerHeight;
+
+            const i = introRunway.getBoundingClientRect();
+            introTop    = i.top + window.scrollY;
+            introHeight = introRunway.offsetHeight;
+
+            const h = heroRunway.getBoundingClientRect();
+            heroTop    = h.top + window.scrollY;
+            heroHeight = heroRunway.offsetHeight;
+        }
+
+        /* ============================================
+           Scroll-driven update (single RAF for all phases)
+           ============================================ */
+        function update() {
+            const scrollY = window.scrollY;
+
+            /* ----- Phase 0: hero shrink + block scatter ----- */
+            const introRunwayLen = introHeight - viewportH;
+            let introP = introRunwayLen > 0
+                ? (scrollY - introTop) / introRunwayLen
+                : 0;
+            introP = clamp01(introP);
+
+            // Hero shrinks from 100vw/100vh → 60vw/60vh, border-radius 0 → 24px
+            const heroSize = 100 - 40 * introP;
+            mainHero.style.width        = heroSize + 'vw';
+            mainHero.style.height       = heroSize + 'vh';
+            mainHero.style.borderRadius = (24 * introP) + 'px';
+
+            // Script text fades out a bit faster than the shrink
+            heroScript.style.opacity = String(Math.max(0, 1 - introP * 1.6));
+
+            // Scatter blocks slide in from off-screen edges
+            const blockEase = easeOutCubic(introP);
+            for (let k = 0; k < introBlocks.length; k++) {
+                const fromPct = blockDirs[k] === 'left' ? -160 : 160;
+                const tx      = fromPct * (1 - blockEase);
+                introBlocks[k].style.transform = `translateX(${tx}%)`;
+            }
+
+            // Nav fades in once the hero starts shrinking past ~20%
+            const navOpacity = clamp01((introP - 0.2) / 0.55);
+            topNav.style.opacity = String(navOpacity);
+            if (navOpacity > 0.1) topNav.classList.add('is-visible');
+            else topNav.classList.remove('is-visible');
+
+            /* ----- Phase 1: polaroid scatter ----- */
+            const heroRunwayLen = heroHeight - viewportH;
+            let heroP = heroRunwayLen > 0
+                ? (scrollY - heroTop) / heroRunwayLen
+                : 0;
+            heroP = clamp01(heroP);
+
+            for (const c of cards) {
+                const span = c.endP - c.startP;
+                let p = span > 0 ? (heroP - c.startP) / span : 1;
+                p = clamp01(p);
+                const e = easeOutCubic(p);
+
+                const x = c.endX * e;
+                const y = 100 + (c.endY - 100) * e;
+                const r = c.endRot * e;
+
+                c.el.style.transform =
+                    `translate(-50%, -50%) translate(${x}vw, ${y}vh) rotate(${r}deg)`;
+            }
+
+            if (heroP > 0.04) phase1Cue.classList.add('hide');
+            else phase1Cue.classList.remove('hide');
+
+            ticking = false;
+        }
+
+        function onScroll() {
+            if (!ticking) {
+                requestAnimationFrame(update);
+                ticking = true;
+            }
+        }
+
+        measure();
+        update();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', () => { measure(); update(); });
+        window.addEventListener('load',   () => { measure(); update(); });
+
+        /* ============================================
+           Phase 2: date reveal via IntersectionObserver
+           ============================================ */
+        const dateReveal = document.getElementById('dateReveal');
+        const dateObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    dateReveal.classList.add('visible');
+                } else if (entry.boundingClientRect.top > 0) {
+                    dateReveal.classList.remove('visible');
+                }
+            }
+        }, { threshold: 0.45 });
+        dateObserver.observe(dateReveal);
+
+        /* ============================================
+           Phase 3: form submit + friend-mapping easter egg
+           ============================================ */
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyv3hM49b9Nnv9ng6dYWd6OfQFWY7ixAX6JWEzuIudpZ8NYKp0bvZnf2fBqfv9BX6pHzQ/exec';
+        const defaultImageUrl = "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+
+        const friendMappings = [
+            {
+                firstNameAliases: ["sarah", "莎拉", "sasa"],
+                lastNameAliases: ["smith", "史密斯"],
+                imageUrl: "https://images.unsplash.com/photo-1533147670608-2a2f9775d3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                firstNameAliases: ["mike", "michael", "邁克", "magic mike"],
+                lastNameAliases: ["chen", "陳", "c"],
+                imageUrl: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                firstNameAliases: ["alvin", "alvin brian"],
+                lastNameAliases: ["hou", "侯"],
+                imageUrl: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                firstNameAliases: ["janice", "yu chun"],
+                lastNameAliases: ["shih", "施"],
+                imageUrl: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                firstNameAliases: ["fiona", "fang-i", "fangi", "瑞璇", "方翊", "ian"],
+                lastNameAliases: ["kuo", "hsiao", "郭", "蕭"],
+                imageUrl: "img/fiona.jpg"
+            },
+            {
+                firstNameAliases: ["emily", "wesley", "偉旭", "映寰"],
+                lastNameAliases: ["chen", "chao", "趙", "陳"],
+                imageUrl: "img/emily.JPG"
+            }
+        ];
+
+        const form      = document.getElementById('rsvpForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+
+            submitBtn.disabled  = true;
+            submitBtn.innerText = "Sending...";
+
+            const firstInput = document.getElementById('firstName').value.toLowerCase().trim();
+            const lastInput  = document.getElementById('lastName').value.toLowerCase().trim();
+
+            let matchedImageUrl = defaultImageUrl;
+            for (const group of friendMappings) {
+                const firstMatch = group.firstNameAliases.some(alias => firstInput.includes(alias) || alias.includes(firstInput));
+                const lastMatch  = group.lastNameAliases.some(alias => lastInput.includes(alias) || alias.includes(lastInput));
+                if (firstMatch && lastMatch) {
+                    matchedImageUrl = group.imageUrl;
+                    break;
+                }
+            }
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode:   'no-cors',
+                body:   new FormData(form)
+            })
+            .then(response => {
+                form.style.display = 'none';
+                document.getElementById('form-divider').style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+
+                const heroImg = document.getElementById('hero-image');
+                heroImg.src = matchedImageUrl;
+                document.getElementById('main-container').style.maxWidth = '850px';
+                heroImg.style.maxWidth     = '100%';
+                heroImg.style.borderRadius = '8px';
+                heroImg.style.mixBlendMode = 'normal';
+                heroImg.style.boxShadow    = '0 4px 12px rgba(0,0,0,0.08)';
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                submitBtn.disabled  = false;
+                submitBtn.innerText = "Error - Try Again";
+                alert("There was an issue submitting your RSVP. Please try again.");
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+*.jpg
+*.JPG
+*.gif
+!img/banner.jpg
