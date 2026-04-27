@@ -433,9 +433,17 @@
             text-transform: uppercase;
             color: #666;
         }
+        .venue-time {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 500;
+            color: #a39171;
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
         .venue-name {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 500;
             color: #1A1A1A;
             line-height: 1;
@@ -533,6 +541,64 @@
             .date-runway { padding: 100px 20px; gap: 70px; }
             .venue-image-wrapper { height: 280px; }
         }
+
+        /* ============================================
+           Ceremony section (URL-gated)
+           ============================================ */
+        .ceremony-section {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+        }
+        .ceremony-section.shown {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .ceremony-divider {
+            width: 40px;
+            height: 1px;
+            background-color: #a39171;
+            opacity: 0.5;
+        }
+        .ceremony-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666;
+        }
+        .ceremony-time {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 500;
+            color: #a39171;
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+        .ceremony-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 500;
+            color: #1A1A1A;
+            line-height: 1;
+            text-align: center;
+        }
+        .ceremony-address {
+            text-align: center;
+        }
+        .ceremony-address a {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            line-height: 1.4;
+            color: #1A1A1A;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(26,26,26,0.2);
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+        .ceremony-address a:hover { opacity: 0.7; border-bottom-color: #1A1A1A; }
 
         /* ============================================
            PHASE 3 — RSVP form
@@ -760,14 +826,28 @@
             <!-- <p class="date-sub">San Francisco Bay Area</p> -->
         </div>
     
+        <div class="ceremony-section" id="ceremonySection">
+            <div class="ceremony-divider"></div>
+            <p class="ceremony-label">Wedding Ceremony</p>
+            <h3 class="ceremony-name">San Francisco City Hall</h3>
+            <p class="ceremony-time">3 PM</p>
+            <div class="ceremony-address">
+                <a href="https://maps.app.goo.gl/jKrEM9dJmULLPHKH7" target="_blank" rel="noopener noreferrer">
+                    1 Dr Carlton B Goodlett Pl, San Francisco
+                </a>
+            </div>
+        </div>
+
         <div class="venue-reveal reveal-item">
+            <div class="ceremony-divider"></div>
             <div class="venue-image-wrapper">
                 <img src="img/venue_sm.jpg" alt="The Progress, San Francisco" decoding="async">
             </div>
             <div class="venue-details">
                 <p class="venue-label">Wedding Dinner</p>
                 <h3 class="venue-name">The Progress</h3>
-                
+                <p class="venue-time">5:30 PM</p>
+
                 <div class="venue-accolades">
                     <div class="michelin-badge">
                         <img src="img/michelin-logo-v2.png" alt="Michelin Star" class="michelin-logo">
@@ -781,7 +861,7 @@
                         1525 Fillmore Street, San Francisco
                     </a>
                 </div>
-        
+
                 <a href="https://www.theworkshopsf.com/samplemenus" target="_blank" class="menu-link">View Sample Menu</a>
             </div>
         </div>
@@ -1032,6 +1112,11 @@
             measure();
             update();
         });
+
+        /* Ceremony section — visible only when URL contains ?ceremony=1 */
+        if (new URLSearchParams(window.location.search).get('c') === '1') {
+            document.getElementById('ceremonySection').classList.add('shown');
+        }
 
         /* ============================================
            Phase 2: date reveal via IntersectionObserver

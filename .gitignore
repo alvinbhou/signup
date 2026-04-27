@@ -4,3 +4,4 @@
 *.mp4
 .claude/*
 !img/banner*.jpg
+!img/venue_sm.jpg
