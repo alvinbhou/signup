@@ -731,19 +731,19 @@
 
             <div class="polaroid-container">
                 <div class="polaroid-card" data-end-x="-24" data-end-y="-6"  data-end-rot="-14" data-start-p="0.00" data-end-p="0.55">
-                    <img src="img/banner.jpg" alt="" decoding="async">
+                    <img src="img/banner_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="22"  data-end-y="-2"  data-end-rot="11"  data-start-p="0.10" data-end-p="0.65">
-                    <img src="img/banner4.jpg" alt="" decoding="async">
+                    <img src="img/banner4_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="-12" data-end-y="12"  data-end-rot="-7"  data-start-p="0.20" data-end-p="0.75">
-                    <img src="img/banner2.jpg" alt="" decoding="async">
+                    <img src="img/banner2_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="16"  data-end-y="13"  data-end-rot="8"   data-start-p="0.30" data-end-p="0.85">
-                    <img src="img/banner5.jpg" alt="" decoding="async">
+                    <img src="img/banner5_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="0"   data-end-y="2"   data-end-rot="-3"  data-start-p="0.40" data-end-p="1.00">
-                    <img src="img/banner3.jpg" alt="" decoding="async">
+                    <img src="img/banner3_sm.jpg" alt="" decoding="async">
                 </div>
             </div>
 
@@ -762,7 +762,7 @@
     
         <div class="venue-reveal reveal-item">
             <div class="venue-image-wrapper">
-                <img src="https://images.squarespace-cdn.com/content/v1/6501f6c205a149092c5a1943/1736560877961-7SB3YXD4DBK5Z4YOMBO1/9.20.23-1070.jpg?format=1000w" alt="The Progress, San Francisco">
+                <img src="img/venue_sm.jpg" alt="The Progress, San Francisco" decoding="async">
             </div>
             <div class="venue-details">
                 <p class="venue-label">Wedding Dinner</p>
@@ -913,13 +913,25 @@
         /* ============================================
            Layout measurements
            ============================================ */
-        let viewportH    = 0;
-        let introTop     = 0, introHeight = 0;
-        let heroTop      = 0, heroHeight  = 0;
-        let ticking      = false;
+        let viewportH = 0, vwPx = 0, vhPx = 0, isMobile = false;
+        let introTop  = 0, introHeight = 0;
+        let heroTop   = 0, heroHeight  = 0;
+        let ticking   = false;
+
+        // Constant — declared once, never reallocated per frame
+        const MOB_TARGETS = [
+            { x: -24, y: -32, r: -14 },
+            { x:  22, y: -16, r:  11 },
+            { x: -18, y:  -1, r:  -7 },
+            { x:  20, y:  15, r:   8 },
+            { x:  -4, y:  30, r:  -3 },
+        ];
 
         function measure() {
             viewportH = window.innerHeight;
+            vwPx      = window.innerWidth / 100;
+            vhPx      = viewportH / 100;
+            isMobile  = window.innerWidth < 768;
 
             const i = introRunway.getBoundingClientRect();
             introTop    = i.top + window.scrollY;
@@ -974,18 +986,6 @@
                 : 0;
             heroP = clamp01(heroP);
 
-            // On mobile, vw spread is tiny (~90px for 24vw on 375px) and cards are
-            // ~46vh tall, so the desktop end positions pile all 5 cards together.
-            // Use a vertical cascade instead — 62vh spread vs the desktop's 19vh.
-            const isMobile = window.innerWidth < 768;
-            const mobTargets = [
-                { x: -24, y: -32, r: -14 },
-                { x:  22, y: -16, r:  11 },
-                { x: -18, y:  -1, r:  -7 },
-                { x:  20, y:  15, r:   8 },
-                { x:  -4, y:  30, r:  -3 },
-            ];
-
             for (let i = 0; i < cards.length; i++) {
                 const c = cards[i];
                 const span = c.endP - c.startP;
@@ -993,16 +993,17 @@
                 p = clamp01(p);
                 const e = easeOutCubic(p);
 
-                const tX = isMobile ? mobTargets[i].x : c.endX;
-                const tY = isMobile ? mobTargets[i].y : c.endY;
-                const tR = isMobile ? mobTargets[i].r : c.endRot;
+                const tX = isMobile ? MOB_TARGETS[i].x : c.endX;
+                const tY = isMobile ? MOB_TARGETS[i].y : c.endY;
+                const tR = isMobile ? MOB_TARGETS[i].r : c.endRot;
 
-                const x = tX * e;
-                const y = 60 + (tY - 60) * e;
-                const r = tR * e;
+                // Pre-computed pixel values — avoids vw/vh unit resolution on main thread per frame
+                const xPx = tX * e * vwPx;
+                const yPx = (60 + (tY - 60) * e) * vhPx;
+                const r   = tR * e;
 
                 c.el.style.transform =
-                    `translate(-50%, -50%) translate(${x}vw, ${y}vh) rotate(${r}deg)`;
+                    `translate(-50%, -50%) translate3d(${xPx}px, ${yPx}px, 0) rotate(${r}deg)`;
             }
 
             if (heroP > 0.04) phase1Cue.classList.add('hide');
@@ -1022,7 +1023,15 @@
         update();
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('resize', () => { measure(); update(); });
-        window.addEventListener('load',   () => { measure(); update(); });
+        window.addEventListener('load', () => {
+            // Force off-main-thread decode of all polaroid images before user scrolls there.
+            // decoding="async" alone only hints; .decode() actually schedules it.
+            document.querySelectorAll('.polaroid-card img').forEach(img => {
+                img.decode().catch(() => {});
+            });
+            measure();
+            update();
+        });
 
         /* ============================================
            Phase 2: date reveal via IntersectionObserver

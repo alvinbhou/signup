@@ -1,4 +1,6 @@
 *.jpg
 *.JPG
 *.gif
+*.mp4
+.claude/*
 !img/banner*.jpg
