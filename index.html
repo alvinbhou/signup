@@ -128,7 +128,10 @@
         .hero-script-text {
             position: absolute;
             left: 50%;
-            bottom: 9%;
+            
+            /* Revert this to keep your names perfectly placed */
+            bottom: 9%; 
+            
             transform: translateX(-50%);
             text-align: center;
             color: #ffffff;
@@ -145,16 +148,24 @@
             letter-spacing: 2px;
         }
         .hero-script-text .hero-scroll-cue {
+            /* These three lines detach it from the names and keep it centered */
+            position: absolute;
+            width: 100%;
+            left: 0;
+            
+            /* Drops it below the names */
+            top: 100%; 
+            /* Increase this value (e.g., 6vh, 8vh) to push it closer to the bottom edge */
+            margin-top: 4vh; 
+            
             display: block;
-            margin-top: 22px;
             font-family: 'Inter', sans-serif;
             font-size: 0.7rem;
             letter-spacing: 4px;
             font-weight: 400;
             opacity: 0.9;
-            animation: cue-bounce 2.4s ease-in-out infinite;
+            animation: cue-bounce-y 2.4s ease-in-out infinite; 
         }
-
         /* Scatter blocks that frame the shrunken hero */
         .intro-scatter-block {
             position: absolute;
@@ -268,7 +279,7 @@
                 0 30px 60px rgba(0, 0, 0, 0.20),
                 0 10px 24px rgba(0, 0, 0, 0.10);
             will-change: transform;
-            transform: translate(-50%, -50%) translate(0, 100vh) rotate(0deg);
+            transform: translate(-50%, -50%) translate(0, 60vh) rotate(0deg);
         }
         .polaroid-card img {
             display: block;
@@ -299,6 +310,11 @@
             50%      { transform: translate(-50%, 6px); }
         }
 
+        @keyframes cue-bounce-y {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(6px); }
+        }
+
         @media (max-width: 900px) {
             .big-display { font-size: clamp(2.5rem, 16vw, 9rem); white-space: normal; }
         }
@@ -311,21 +327,30 @@
            PHASE 2 — Date reveal
            ============================================ */
         .date-runway {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             background-color: #f3f1ec;
-            padding: 0 24px;
+            /* Adjust padding: 140px top, 24px sides, 40px bottom (reduced) */
+            padding: 140px 24px 40px; 
+            gap: 80px; /* Slightly reduced gap between the Date and the Venue info */
         }
-        .date-reveal {
+
+        /* Shared fade-in animation class */
+        .reveal-item {
             text-align: center;
             opacity: 0;
-            transform: translateY(24px) scale(0.96);
-            transition: opacity 1.4s ease, transform 1.4s ease;
+            transform: translateY(40px);
+            transition: opacity 1.2s ease-out, transform 1.2s ease-out;
         }
-        .date-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .reveal-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Date text styles */
         .date-prelude {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
@@ -353,13 +378,154 @@
             opacity: 0.6;
         }
 
+        /* Venue specifics */
+        .venue-reveal {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        .venue-image-wrapper {
+            width: 100%;
+            max-width: 650px;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+        .venue-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.8s ease;
+        }
+        .venue-reveal:hover .venue-image-wrapper img {
+            transform: scale(1.03); /* Subtle zoom on hover */
+        }
+        .venue-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .venue-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666;
+        }
+        .venue-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 500;
+            color: #1A1A1A;
+            line-height: 1;
+        }
+        /* Make sure your accolades container still aligns nicely */
+        .venue-accolades {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 12px; 
+        }
+
+        /* New flex container to stack the logo and text */
+        .michelin-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Sized down slightly since it's just the flower now */
+        .michelin-logo {
+            height: 55px; 
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 5px; /* Space between the logo and the word MICHELIN */
+        }
+
+        /* Matches the bold top text */
+        .michelin-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #1A1A1A;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+        }
+
+        /* Matches the lighter bottom text */
+        .michelin-year {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.45rem;
+            font-weight: 400;
+            color: #1A1A1A;
+            line-height: 1.1;
+        }
+
+        /* New Address Styles */
+        .venue-address {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .venue-address a {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            line-height: 1.4;
+            color: #1A1A1A;
+            text-decoration: none;
+            display: inline-block;
+            
+            /* Adds a very subtle underline to signal it's a link */
+            border-bottom: 1px solid rgba(26, 26, 26, 0.2); 
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+        .venue-address a:hover {
+            /* Fades the text slightly but darkens the underline when hovered */
+            opacity: 0.7;
+            border-bottom-color: #1A1A1A; 
+        }
+        .venue-address .phone {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+        .dot-separator {
+            color: #a39171; /* Subtle accent color */
+        }
+        .menu-link {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #1A1A1A;
+            text-decoration: none;
+            border-bottom: 1px solid #1A1A1A;
+            padding-bottom: 4px;
+            transition: opacity 0.3s ease;
+        }
+        .menu-link:hover {
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .date-runway { padding: 100px 20px; gap: 70px; }
+            .venue-image-wrapper { height: 280px; }
+        }
+
         /* ============================================
            PHASE 3 — RSVP form
            ============================================ */
         .form-wrapper {
             display: flex;
             justify-content: center;
-            padding: 80px 20px 100px;
+            
+            /* Reduced the top padding from 80px down to 20px or 0px */
+            padding: 20px 20px 100px; 
             background-color: #f3f1ec;
             position: relative;
         }
@@ -507,7 +673,10 @@
 
     <!-- ===== Global fixed nav ===== -->
     <nav class="top-nav" id="topNav">
-        <div class="logo">Alvin &amp; Janice</div>
+        <a href="#" class="logo" style="text-decoration: none;" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+            Alvin &amp; Janice
+        </a>
+        
         <div class="links">
             <a href="#">Travel</a>
             <a href="#">Registry</a>
@@ -515,7 +684,6 @@
         </div>
         <a href="#rsvp" class="rsvp-pill">RSVP — July 15</a>
     </nav>
-
     <!-- ===== PHASE 0: full-bleed hero shrink + scatter blocks ===== -->
     <div class="intro-runway" id="introRunway">
         <div class="sticky-intro-view">
@@ -569,10 +737,36 @@
 
     <!-- ===== PHASE 2: date reveal ===== -->
     <section class="date-runway" id="dateRunway">
-        <div class="date-reveal" id="dateReveal">
+        <div class="date-reveal reveal-item">
             <p class="date-prelude">so please join us...</p>
             <h2 class="date-headline">JULY 15, 2026</h2>
-            <p class="date-sub">San Francisco Bay Area</p>
+            <!-- <p class="date-sub">San Francisco Bay Area</p> -->
+        </div>
+    
+        <div class="venue-reveal reveal-item">
+            <div class="venue-image-wrapper">
+                <img src="https://images.squarespace-cdn.com/content/v1/6501f6c205a149092c5a1943/1736560877961-7SB3YXD4DBK5Z4YOMBO1/9.20.23-1070.jpg?format=1000w" alt="The Progress, San Francisco">
+            </div>
+            <div class="venue-details">
+                <p class="venue-label">Wedding Dinner</p>
+                <h3 class="venue-name">The Progress</h3>
+                
+                <div class="venue-accolades">
+                    <div class="michelin-badge">
+                        <img src="img/michelin-logo-v2.png" alt="Michelin Star" class="michelin-logo">
+                        <span class="michelin-title">MICHELIN</span>
+                        <span class="michelin-year">2017-2025</span>
+                    </div>
+                </div>
+
+                <div class="venue-address">
+                    <a href="https://www.google.com/maps/place/The+Progress/@37.7836737,-122.4352434,959m/data=!3m1!1e3!4m6!3m5!1s0x808580b9a3e835f3:0xd1e4dd4d58be86b6!8m2!3d37.7836666!4d-122.4329707!16s%2Fg%2F11b6p80zcx?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">
+                        1525 Fillmore Street, San Francisco
+                    </a>
+                </div>
+        
+                <a href="https://www.theworkshopsf.com/samplemenus" target="_blank" class="menu-link">View Sample Menu</a>
+            </div>
         </div>
     </section>
 
@@ -588,7 +782,7 @@
             </div>
 
             <div class="header-content">
-                <h1>Alvin &amp; Janice</h1>
+                <h1>RSVP</h1>
                 <p>We are so excited to celebrate our special day with you. Please let us know if you can make it.</p>
             </div>
 
@@ -769,7 +963,7 @@
                 const e = easeOutCubic(p);
 
                 const x = c.endX * e;
-                const y = 100 + (c.endY - 100) * e;
+                const y = 60 + (c.endY - 60) * e;
                 const r = c.endRot * e;
 
                 c.el.style.transform =
@@ -798,17 +992,19 @@
         /* ============================================
            Phase 2: date reveal via IntersectionObserver
            ============================================ */
-        const dateReveal = document.getElementById('dateReveal');
-        const dateObserver = new IntersectionObserver((entries) => {
+        const revealItems = document.querySelectorAll('.reveal-item');
+        const phase2Observer = new IntersectionObserver((entries) => {
             for (const entry of entries) {
                 if (entry.isIntersecting) {
-                    dateReveal.classList.add('visible');
+                    entry.target.classList.add('visible');
                 } else if (entry.boundingClientRect.top > 0) {
-                    dateReveal.classList.remove('visible');
+                    // Optional: removes the class if scrolled back up, so it animates again
+                    entry.target.classList.remove('visible'); 
                 }
             }
-        }, { threshold: 0.45 });
-        dateObserver.observe(dateReveal);
+        }, { threshold: 0.25 }); // Triggers when 25% of the element is visible
+
+        revealItems.forEach(item => phase2Observer.observe(item));
 
         /* ============================================
            Phase 3: form submit + friend-mapping easter egg
