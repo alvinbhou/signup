@@ -81,10 +81,12 @@
         /* ============================================
            PHASE 0 — Full-screen hero shrink + scatter blocks
            ============================================ */
+        /* Update 1: Force the intro runway to stay on top so the text slides under it */
         .intro-runway {
             position: relative;
             height: 200vh;
             width: 100%;
+            z-index: 5; /* Add this line */
         }
         .sticky-intro-view {
             position: sticky;
@@ -187,16 +189,28 @@
         }
 
         @media (max-width: 900px) {
-            .intro-scatter-block { display: none; }
+            .block-tl { width: 130px; height: 150px; top: 7vh;  left: 3vw;  border-radius: 14px; }
+            .block-bl { width: 110px; height: 130px; top: 58vh; left: 5vw;  border-radius: 14px; }
+            .block-tr { width: 100px; height: 140px; top: 16vh; right: 3vw; border-radius: 14px; }
+            .block-br { width: 120px; height: 110px; top: 65vh; right: 5vw; border-radius: 14px; }
+        }
+        @media (max-width: 500px) {
+            .block-tl { width: 92px;  height: 112px; top: 8vh;  left: 2vw;  border-radius: 12px; }
+            .block-bl { width: 78px;  height: 96px;  top: 60vh; left: 3vw;  border-radius: 12px; }
+            .block-tr { width: 72px;  height: 100px; top: 17vh; right: 2vw; border-radius: 12px; }
+            .block-br { width: 88px;  height: 84px;  top: 66vh; right: 3vw; border-radius: 12px; }
         }
 
         /* ============================================
            PHASE 1 — Pinned text hero with polaroid scatter
            ============================================ */
+        /* Update 2: Pull the hero runway UP by 35vh so the gap disappears */
         .hero-runway {
             position: relative;
             height: 300vh;
             width: 100%;
+            margin-top: -35vh; /* Add this line! Tweak this number to adjust the gap */
+            z-index: 1;        /* Add this line */
         }
         .sticky-view {
             position: sticky;
