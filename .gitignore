@@ -1,4 +1,4 @@
 *.jpg
 *.JPG
 *.gif
-!img/banner.jpg
+!img/banner*.jpg
