@@ -109,7 +109,7 @@
             width: 100vw;
             height: 100vh;
             height: 100dvh;
-            background-image: url('img/banner.jpg');
+            background-image: url('img/main_banner.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -181,25 +181,25 @@
         .block-tl {
             width: 280px;  height: 300px;
             top: 6vh;      left: 3vw;
-            background-color: #b8917a;
+            background-color: #BFCDB0;
             transform: translateX(-160%);
         }
         .block-bl {
             width: 240px;  height: 260px;
             top: 50vh;     left: 6vw;
-            background-color: #6f7a5e;
+            background-color: #E2D294;
             transform: translateX(-160%);
         }
         .block-tr {
             width: 220px;  height: 280px;
             top: 22vh;     right: 3vw;
-            background-color: #c9b896;
+            background-color: #E8C4CC;
             transform: translateX(160%);
         }
         .block-br {
             width: 240px;  height: 220px;
             top: 60vh;     right: 5vw;
-            background-color: #8a7461;
+            background-color: #C4D4E4;
             transform: translateX(160%);
         }
 
@@ -491,7 +491,10 @@
 
         /* New Address Styles */
         .venue-address {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             margin-bottom: 24px;
         }
         .venue-address a {
@@ -522,19 +525,11 @@
         .dot-separator {
             color: #a39171; /* Subtle accent color */
         }
-        .menu-link {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #1A1A1A;
-            text-decoration: none;
-            border-bottom: 1px solid #1A1A1A;
-            padding-bottom: 4px;
-            transition: opacity 0.3s ease;
-        }
-        .menu-link:hover {
-            opacity: 0.5;
+        .address-separator {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            color: #a39171;
+            opacity: 0.7;
         }
 
         @media (max-width: 768px) {
@@ -601,16 +596,77 @@
         .ceremony-address a:hover { opacity: 0.7; border-bottom-color: #1A1A1A; }
 
         /* ============================================
+           Dress code
+           ============================================ */
+        .dress-code-section {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .dress-code-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666;
+        }
+        .dress-code-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+            color: #1A1A1A;
+            letter-spacing: 0.4px;
+            margin-top: 8px;
+        }
+        .dress-code-palettes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            width: 100%;
+            max-width: 720px;
+            margin: 4px auto 0;
+        }
+        .dress-code-palette {
+            justify-self: center;
+            height: auto;
+            max-height: 60px;
+            max-width: 100%;
+        }
+        .dress-code-palette:first-child {
+            margin-top: 25px;
+        }
+        .dress-code-figures {
+            width: 100%;
+            max-width: 720px;
+            height: auto;
+        }
+
+        /* ============================================
            PHASE 3 — RSVP form
            ============================================ */
         .form-wrapper {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            
-            /* Reduced the top padding from 80px down to 20px or 0px */
-            padding: 20px 20px 100px; 
+
+            padding: 60px 20px 100px;
             background-color: #f3f1ec;
             position: relative;
+        }
+        .rsvp-headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: clamp(2.5rem, 9vw, 7rem);
+            letter-spacing: 0.1em;
+            line-height: 1;
+            color: #1A1A1A;
+            text-align: center;
+            margin-bottom: 50px;
         }
         .invitation-container {
             background-color: #ffffff;
@@ -679,7 +735,36 @@
             margin-top: -4px;
             line-height: 1.3;
         }
-        input[type="text"], input[type="email"], select {
+        .add-guest-btn {
+            background: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #a39171;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 18px;
+            transition: opacity 0.3s ease;
+        }
+        .add-guest-btn:hover { opacity: 0.65; }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .label-row label { margin-bottom: 0; }
+        .remove-guest-btn {
+            background: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: #a39171;
+            cursor: pointer;
+            padding: 0;
+            transition: opacity 0.3s ease;
+        }
+        .remove-guest-btn:hover { opacity: 0.65; }
+        input[type="text"], input[type="email"], select, textarea {
             width: 100%;
             padding: 11px 12px;
             border: 1px solid #e0e0e0;
@@ -691,8 +776,13 @@
             background-color: #fff;
             color: #1A1A1A;
         }
-        input[type="text"]:focus, input[type="email"]:focus, select:focus {
+        input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
             border-color: #a39171;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
         }
         select {
             cursor: pointer;
@@ -797,19 +887,19 @@
 
             <div class="polaroid-container">
                 <div class="polaroid-card" data-end-x="-24" data-end-y="-6"  data-end-rot="-14" data-start-p="0.00" data-end-p="0.55">
-                    <img src="img/banner_sm.jpg" alt="" decoding="async">
+                    <img src="img/hero_img1_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="22"  data-end-y="-2"  data-end-rot="11"  data-start-p="0.10" data-end-p="0.65">
-                    <img src="img/banner4_sm.jpg" alt="" decoding="async">
+                    <img src="img/hero_img2_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="-12" data-end-y="12"  data-end-rot="-7"  data-start-p="0.20" data-end-p="0.75">
-                    <img src="img/banner2_sm.jpg" alt="" decoding="async">
+                    <img src="img/hero_img3_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="16"  data-end-y="13"  data-end-rot="8"   data-start-p="0.30" data-end-p="0.85">
-                    <img src="img/banner5_sm.jpg" alt="" decoding="async">
+                    <img src="img/hero_img4_sm.jpg" alt="" decoding="async">
                 </div>
                 <div class="polaroid-card" data-end-x="0"   data-end-y="2"   data-end-rot="-3"  data-start-p="0.40" data-end-p="1.00">
-                    <img src="img/banner3_sm.jpg" alt="" decoding="async">
+                    <img src="img/hero_img5_sm.jpg" alt="" decoding="async">
                 </div>
             </div>
 
@@ -860,15 +950,29 @@
                     <a href="https://www.google.com/maps/place/The+Progress/@37.7836737,-122.4352434,959m/data=!3m1!1e3!4m6!3m5!1s0x808580b9a3e835f3:0xd1e4dd4d58be86b6!8m2!3d37.7836666!4d-122.4329707!16s%2Fg%2F11b6p80zcx?entry=ttu&g_ep=EgoyMDI2MDQyMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">
                         1525 Fillmore Street, San Francisco
                     </a>
+                    <span class="address-separator" aria-hidden="true">|</span>
+                    <a href="https://www.theworkshopsf.com/samplemenus" target="_blank" rel="noopener noreferrer">
+                        Sample Menu
+                    </a>
                 </div>
-
-                <a href="https://www.theworkshopsf.com/samplemenus" target="_blank" class="menu-link">View Sample Menu</a>
             </div>
+        </div>
+
+        <div class="dress-code-section reveal-item">
+            <div class="ceremony-divider"></div>
+            <p class="dress-code-label">Dress Code</p>
+            <div class="dress-code-palettes">
+                <img src="img/dress_code_palette1.png" alt="" class="dress-code-palette" decoding="async">
+                <img src="img/dress_code_palette2.png" alt="" class="dress-code-palette" decoding="async">
+            </div>
+            <img src="img/dress_code_figures.png" alt="Two ladies in summer elegant attire and two gentlemen in formal attire" class="dress-code-figures" decoding="async">
+            <p class="dress-code-subtitle">Summer Elegant &middot; Formal Attire</p>
         </div>
     </section>
 
     <!-- ===== PHASE 3: RSVP form ===== -->
     <section id="rsvp" class="form-wrapper">
+        <h2 class="rsvp-headline reveal-item">RSVP</h2>
         <div class="invitation-container" id="main-container">
 
             <div class="customization-section">
@@ -878,45 +982,33 @@
                      class="character-illustration">
             </div>
 
-            <div class="header-content">
-                <h1>RSVP</h1>
-                <p>We are so excited to celebrate our special day with you. Please let us know if you can make it.</p>
-            </div>
-
-            <div class="divider" id="form-divider"></div>
-
             <form class="rsvp-form" id="rsvpForm">
 
-                <div class="name-row">
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
-                    </div>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Your full name" required>
                 </div>
+
+                <div class="form-group" id="guest2Group" style="display: none;">
+                    <div class="label-row">
+                        <label for="fullName2">Plus One</label>
+                        <button type="button" class="remove-guest-btn" id="removeGuestBtn" aria-label="Remove plus one">&times; Remove</button>
+                    </div>
+                    <input type="text" id="fullName2" name="fullName2" placeholder="Plus one's full name">
+                </div>
+
+                <button type="button" class="add-guest-btn" id="addGuestBtn">+ Add a plus one</button>
 
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="Your email address" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="numGuests">Number of Guests</label>
-                    <select id="numGuests" name="numGuests" required>
-                        <option value="1" selected>1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
+                <div class="form-group" id="ceremonyAttendGroup" style="display: none;">
                     <label>Will you attend the ceremony?</label>
                     <div class="radio-group">
                         <div class="radio-option">
-                            <input type="radio" id="ceremonyYes" name="attendCeremony" value="Yes" required>
+                            <input type="radio" id="ceremonyYes" name="attendCeremony" value="Yes">
                             <label class="radio-label" for="ceremonyYes">Yes</label>
                         </div>
                         <div class="radio-option">
@@ -941,18 +1033,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="luckyDraw">Lucky Draw Seed Phrase</label>
-                    <span class="sub-label">If you want to participate in a lucky draw to win a prize in the dinner, pick a random phrase from the list below!</span>
-                    <select id="luckyDraw" name="luckyDraw">
-                        <option value="" disabled selected>Select a city</option>
-                        <option value="Sunnyvale">Sunnyvale</option>
-                        <option value="San Francisco">San Francisco</option>
-                        <option value="Menlo Park">Menlo Park</option>
-                        <option value="Fremont">Fremont</option>
-                        <option value="Oakland">Oakland</option>
-                        <option value="San Jose">San Jose</option>
-                        <option value="Palo Alto">Palo Alto</option>
-                    </select>
+                    <label for="message">Leave a Note for Alvin &amp; Janice</label>
+                    <span class="sub-label">Your comment will be entered into a lucky draw for a prize at the dinner! Feel free to also note any food allergies or dietary restrictions.</span>
+                    <textarea id="message" name="message" placeholder="Share a memory, well wishes, or anything you'd like..." rows="3"></textarea>
                 </div>
 
                 <button type="submit" id="submitBtn">Send RSVP</button>
@@ -1113,9 +1196,12 @@
             update();
         });
 
-        /* Ceremony section — visible only when URL contains ?ceremony=1 */
+        /* Ceremony section + RSVP question — visible only when URL contains ?c=1 */
         if (new URLSearchParams(window.location.search).get('c') === '1') {
             document.getElementById('ceremonySection').classList.add('shown');
+            const ceremonyGroup = document.getElementById('ceremonyAttendGroup');
+            ceremonyGroup.style.display = '';
+            document.getElementById('ceremonyYes').required = true;
         }
 
         /* ============================================
@@ -1138,7 +1224,7 @@
         /* ============================================
            Phase 3: form submit + friend-mapping easter egg
            ============================================ */
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyv3hM49b9Nnv9ng6dYWd6OfQFWY7ixAX6JWEzuIudpZ8NYKp0bvZnf2fBqfv9BX6pHzQ/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyzEFbWL3hJ4HQRRsShJLcbcUQSIyLdSif3uciP_Q-Gf-LvZiPTzPOM3vVfVU43y_2T1A/exec';
         const defaultImageUrl = "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 
         const friendMappings = [
@@ -1177,33 +1263,58 @@
         const form      = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
 
+        document.getElementById('addGuestBtn').addEventListener('click', () => {
+            document.getElementById('guest2Group').style.display = 'block';
+            document.getElementById('addGuestBtn').style.display = 'none';
+        });
+
+        document.getElementById('removeGuestBtn').addEventListener('click', () => {
+            document.getElementById('fullName2').value = '';
+            document.getElementById('guest2Group').style.display = 'none';
+            document.getElementById('addGuestBtn').style.display = '';
+        });
+
+        function matchName(input) {
+            if (!input) return null;
+            for (const group of friendMappings) {
+                const firstMatch = group.firstNameAliases.some(alias => input.includes(alias));
+                const lastMatch  = group.lastNameAliases.some(alias => input.includes(alias));
+                if (firstMatch && lastMatch) return group.imageUrl;
+            }
+            return null;
+        }
+
         form.addEventListener('submit', e => {
             e.preventDefault();
 
             submitBtn.disabled  = true;
             submitBtn.innerText = "Sending...";
 
-            const firstInput = document.getElementById('firstName').value.toLowerCase().trim();
-            const lastInput  = document.getElementById('lastName').value.toLowerCase().trim();
+            const fullInput  = document.getElementById('fullName').value.toLowerCase().trim();
+            const fullInput2 = document.getElementById('fullName2').value.toLowerCase().trim();
 
-            let matchedImageUrl = defaultImageUrl;
-            for (const group of friendMappings) {
-                const firstMatch = group.firstNameAliases.some(alias => firstInput.includes(alias) || alias.includes(firstInput));
-                const lastMatch  = group.lastNameAliases.some(alias => lastInput.includes(alias) || alias.includes(lastInput));
-                if (firstMatch && lastMatch) {
-                    matchedImageUrl = group.imageUrl;
-                    break;
-                }
-            }
+            const matchedImageUrl = matchName(fullInput) || matchName(fullInput2) || defaultImageUrl;
+
+            const guest2Raw = document.getElementById('fullName2').value.trim();
+            const ceremonyChecked = document.querySelector('input[name="attendCeremony"]:checked');
+            const dinnerChecked   = document.querySelector('input[name="attendDinner"]:checked');
+
+            const data = new FormData();
+            data.append('Timestamp',       new Date().toISOString());
+            data.append('Main Guest Name', document.getElementById('fullName').value.trim());
+            data.append('Guest Two Name',  guest2Raw || 'NO_GUEST_TWO_SPECIFIED');
+            data.append('Email',           document.getElementById('email').value.trim());
+            data.append('Attend Ceremony', ceremonyChecked ? ceremonyChecked.value : 'NO_CEREMONY_OPTION_SPECIFIED');
+            data.append('Attend Dinner',   dinnerChecked ? dinnerChecked.value : '');
+            data.append('Comments',        document.getElementById('message').value.trim());
 
             fetch(scriptURL, {
                 method: 'POST',
                 mode:   'no-cors',
-                body:   new FormData(form)
+                body:   data
             })
             .then(response => {
                 form.style.display = 'none';
-                document.getElementById('form-divider').style.display = 'none';
                 document.getElementById('success-message').style.display = 'block';
 
                 const heroImg = document.getElementById('hero-image');
