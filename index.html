@@ -144,6 +144,14 @@
             width: 92%;
             will-change: opacity;
         }
+        .hero-date {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(0.75rem, 1.5vw, 1rem);
+            letter-spacing: 0.25em;
+            color: #fff;
+            margin: 0 0 6px;
+            opacity: 0.85;
+        }
         .hero-script-text h1 {
             font-family: 'Great Vibes', cursive;
             font-weight: 400;
@@ -181,7 +189,7 @@
         .block-tl {
             width: 280px;  height: 300px;
             top: 6vh;      left: 3vw;
-            background-color: #BFCDB0;
+            background-color: #AECA96;
             transform: translateX(-160%);
         }
         .block-bl {
@@ -205,13 +213,13 @@
 
         @media (max-width: 900px) {
             .block-tl { width: 130px; height: 150px; top: 7vh;  left: 3vw;  border-radius: 14px; }
-            .block-bl { width: 110px; height: 130px; top: 58vh; left: 5vw;  border-radius: 14px; }
+            .block-bl { width: 127px; height: 130px; top: 58vh; left: 5vw;  border-radius: 14px; }
             .block-tr { width: 100px; height: 140px; top: 16vh; right: 3vw; border-radius: 14px; }
             .block-br { width: 120px; height: 110px; top: 65vh; right: 5vw; border-radius: 14px; }
         }
         @media (max-width: 500px) {
             .block-tl { width: 92px;  height: 112px; top: 8vh;  left: 2vw;  border-radius: 12px; }
-            .block-bl { width: 78px;  height: 96px;  top: 60vh; left: 3vw;  border-radius: 12px; }
+            .block-bl { width: 90px;  height: 96px;  top: 60vh; left: 3vw;  border-radius: 12px; }
             .block-tr { width: 72px;  height: 100px; top: 17vh; right: 2vw; border-radius: 12px; }
             .block-br { width: 88px;  height: 84px;  top: 66vh; right: 3vw; border-radius: 12px; }
         }
@@ -281,7 +289,7 @@
             left: 50%;
             width: 280px;
             background-color: #ffffff;
-            padding: 16px 16px 60px;
+            padding: 16px 16px 40px;
             box-shadow:
                 0 30px 60px rgba(0, 0, 0, 0.20),
                 0 10px 24px rgba(0, 0, 0, 0.10);
@@ -336,7 +344,7 @@
             .big-display { font-size: clamp(2.5rem, 16vw, 9rem); white-space: normal; }
         }
         @media (max-width: 768px) {
-            .polaroid-card { width: 200px; padding: 12px 12px 44px; }
+            .polaroid-card { width: 200px; padding: 12px 12px 30px; }
             .polaroid-card img { height: 240px; }
         }
 
@@ -654,7 +662,7 @@
             align-items: center;
             justify-content: center;
 
-            padding: 60px 20px 100px;
+            padding: 24px 20px 100px;
             background-color: #f3f1ec;
             position: relative;
         }
@@ -851,8 +859,8 @@
         </a>
         
         <div class="links">
-            <a href="#">Travel</a>
-            <a href="#">Registry</a>
+            <a href="#dateRunway" onclick="document.getElementById('dateRunway').scrollIntoView({behavior:'smooth'}); return false;">Travel</a>
+            <a href="#rsvp" onclick="document.getElementById('rsvp').scrollIntoView({behavior:'smooth'}); return false;">Registry</a>
             <a href="#">FAQ</a>
         </div>
         <a href="#rsvp" class="rsvp-pill">RSVP — July 15</a>
@@ -868,6 +876,7 @@
 
             <div class="main-hero-container" id="mainHero">
                 <div class="hero-script-text" id="heroScriptText">
+                    <p class="hero-date">7 / 15 / 2026</p>
                     <h1>alvin &amp; janice</h1>
                     <span class="hero-scroll-cue">SCROLL</span>
                 </div>
@@ -930,12 +939,12 @@
 
         <div class="venue-reveal reveal-item">
             <div class="ceremony-divider"></div>
-            <div class="venue-image-wrapper">
+            <a href="https://theprogress-sf.com/" target="_blank" rel="noopener noreferrer" class="venue-image-wrapper">
                 <img src="img/venue_sm.jpg" alt="The Progress, San Francisco" decoding="async">
-            </div>
+            </a>
             <div class="venue-details">
                 <p class="venue-label">Wedding Dinner</p>
-                <h3 class="venue-name">The Progress</h3>
+                <a href="https://theprogress-sf.com/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;"><h3 class="venue-name">The Progress</h3></a>
                 <p class="venue-time">5:30 PM</p>
 
                 <div class="venue-accolades">
@@ -985,7 +994,7 @@
             <form class="rsvp-form" id="rsvpForm">
 
                 <div class="form-group">
-                    <label for="fullName">Full Name</label>
+                    <label for="fullName">Your Full Name</label>
                     <input type="text" id="fullName" name="fullName" placeholder="Your full name" required>
                 </div>
 
@@ -1251,12 +1260,12 @@
             {
                 firstNameAliases: ["fiona", "fang-i", "fangi", "瑞璇", "方翊", "ian"],
                 lastNameAliases: ["kuo", "hsiao", "郭", "蕭"],
-                imageUrl: "img/fiona.jpg"
+                imageUrl: "test/fiona.jpg"
             },
             {
                 firstNameAliases: ["emily", "wesley", "偉旭", "映寰"],
                 lastNameAliases: ["chen", "chao", "趙", "陳"],
-                imageUrl: "img/emily.JPG"
+                imageUrl: "test/emily.JPG"
             }
         ];
 
@@ -1274,11 +1283,33 @@
             document.getElementById('addGuestBtn').style.display = '';
         });
 
+        function editDistance(a, b) {
+            const m = a.length, n = b.length;
+            const dp = Array.from({length: m + 1}, (_, i) =>
+                Array.from({length: n + 1}, (_, j) => i || j)
+            );
+            for (let i = 1; i <= m; i++)
+                for (let j = 1; j <= n; j++)
+                    dp[i][j] = a[i-1] === b[j-1]
+                        ? dp[i-1][j-1]
+                        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+            return dp[m][n];
+        }
+
+        function fuzzyTokenMatch(token, aliases) {
+            return aliases.some(alias => {
+                if (token.includes(alias) || alias.includes(token)) return true;
+                const tolerance = alias.length <= 4 ? 1 : 2;
+                return editDistance(token, alias) <= tolerance;
+            });
+        }
+
         function matchName(input) {
             if (!input) return null;
+            const tokens = input.split(/\s+/).filter(Boolean);
             for (const group of friendMappings) {
-                const firstMatch = group.firstNameAliases.some(alias => input.includes(alias));
-                const lastMatch  = group.lastNameAliases.some(alias => input.includes(alias));
+                const firstMatch = tokens.some(t => fuzzyTokenMatch(t, group.firstNameAliases));
+                const lastMatch  = tokens.some(t => fuzzyTokenMatch(t, group.lastNameAliases));
                 if (firstMatch && lastMatch) return group.imageUrl;
             }
             return null;
@@ -1315,7 +1346,8 @@
             })
             .then(response => {
                 form.style.display = 'none';
-                document.getElementById('success-message').style.display = 'block';
+                const successEl = document.getElementById('success-message');
+                successEl.style.display = 'block';
 
                 const heroImg = document.getElementById('hero-image');
                 heroImg.src = matchedImageUrl;
@@ -1324,6 +1356,16 @@
                 heroImg.style.borderRadius = '8px';
                 heroImg.style.mixBlendMode = 'normal';
                 heroImg.style.boxShadow    = '0 4px 12px rgba(0,0,0,0.08)';
+
+                const scrollToSuccess = () => {
+                    setTimeout(() => successEl.scrollIntoView({ behavior: 'smooth', block: 'end' }), 250);
+                };
+                if (heroImg.complete) {
+                    scrollToSuccess();
+                } else {
+                    heroImg.addEventListener('load', scrollToSuccess, { once: true });
+                    heroImg.addEventListener('error', scrollToSuccess, { once: true });
+                }
             })
             .catch(error => {
                 console.error('Error!', error.message);
