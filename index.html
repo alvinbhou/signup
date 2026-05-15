@@ -988,7 +988,8 @@
                 <img id="hero-image"
                      src="https://cdn.imweb.me/thumbnail/20250314/44a43a20e62ce.gif"
                      alt="Wedding Couple"
-                     class="character-illustration">
+                     class="character-illustration"
+                     referrerpolicy="no-referrer">
             </div>
 
             <form class="rsvp-form" id="rsvpForm">
@@ -1205,8 +1206,8 @@
             update();
         });
 
-        /* Ceremony section + RSVP question — visible only when URL contains ?c=1 */
-        if (new URLSearchParams(window.location.search).get('c') === '1') {
+        /* Ceremony section + RSVP question — visible only when URL contains ?c */
+        if (new URLSearchParams(window.location.search).has('c')) {
             document.getElementById('ceremonySection').classList.add('shown');
             const ceremonyGroup = document.getElementById('ceremonyAttendGroup');
             ceremonyGroup.style.display = '';
@@ -1236,38 +1237,76 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyzEFbWL3hJ4HQRRsShJLcbcUQSIyLdSif3uciP_Q-Gf-LvZiPTzPOM3vVfVU43y_2T1A/exec';
         const defaultImageUrl = "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 
-        const friendMappings = [
-            {
-                firstNameAliases: ["sarah", "莎拉", "sasa"],
-                lastNameAliases: ["smith", "史密斯"],
-                imageUrl: "https://images.unsplash.com/photo-1533147670608-2a2f9775d3a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            },
-            {
-                firstNameAliases: ["mike", "michael", "邁克", "magic mike"],
-                lastNameAliases: ["chen", "陳", "c"],
-                imageUrl: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            },
-            {
-                firstNameAliases: ["alvin", "alvin brian"],
-                lastNameAliases: ["hou", "侯"],
-                imageUrl: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            },
-            {
-                firstNameAliases: ["janice", "yu chun"],
-                lastNameAliases: ["shih", "施"],
-                imageUrl: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            },
-            {
-                firstNameAliases: ["fiona", "fang-i", "fangi", "瑞璇", "方翊", "ian"],
-                lastNameAliases: ["kuo", "hsiao", "郭", "蕭"],
-                imageUrl: "test/fiona.jpg"
-            },
-            {
-                firstNameAliases: ["emily", "wesley", "偉旭", "映寰"],
-                lastNameAliases: ["chen", "chao", "趙", "陳"],
-                imageUrl: "test/emily.JPG"
+        let guestList = [];
+
+        const imageOverrides = {
+            'wenting yeh':  'https://i.imgur.com/hyUWPLE.jpeg',
+            'jennifer chen':'https://i.imgur.com/ndlla6U.jpeg',
+            'fiona kuo':    'https://i.imgur.com/9g9iz8h.jpeg',
+            'brian chu':    'https://i.imgur.com/4ZZATUE.jpeg',
+            'yu hsan chung':'https://i.imgur.com/wBmtkKl.jpeg',
+            'emily chen':   'https://i.imgur.com/TqWEXzb.jpeg',
+            'elaine':       'https://i.imgur.com/Ezt8bIl.jpeg',
+            'frank chen':   'https://i.imgur.com/syMxAXJ.jpeg',
+            'tian':         'https://i.imgur.com/uAFillY.jpeg',
+            'benson guan':  'https://i.imgur.com/Yqj4IYG.jpeg',
+            'Esther': '#TVD',
+            'leo chou': 'https:///i.imgur.com/TmgLBRt.jpeg',
+            'frank chen': 'https://i.imgur.com/syMxAXJ.jpeg',
+            'tian': 'https://i.imgur.com/uAFillY.jpeg',
+        };
+
+        function parsePersonAliases(chName, enName) {
+            const given = [], family = [];
+            const cn = (chName || '').trim();
+            const en = (enName || '').trim().toLowerCase();
+            if (cn.length >= 2) {
+                family.push(cn[0]);
+                given.push(cn.slice(1));
+                given.push(cn);
+            } else if (cn.length === 1) {
+                family.push(cn); given.push(cn);
             }
-        ];
+            const ep = en.split(/\s+/).filter(Boolean);
+            if (ep.length >= 2) {
+                given.push(...ep.slice(0, -1));
+                family.push(ep[ep.length - 1]);
+            } else if (ep.length === 1) {
+                given.push(ep[0]); family.push(ep[0]);
+            }
+            return { given, family };
+        }
+
+        function parseGuestTxt(text) {
+            return text.split('\n')
+                .map(l => l.trim())
+                .filter(l => l && !l.startsWith('#'))
+                .map(l => {
+                    const p = l.split(',').map(s => s.trim());
+                    const persons = [];
+                    if (p[0] || p[1]) persons.push(parsePersonAliases(p[0], p[1]));
+                    if (p[2] || p[3]) persons.push(parsePersonAliases(p[2], p[3]));
+                    const id = (p[1] || '').trim().toLowerCase();
+                    return { persons, id };
+                });
+        }
+
+        guestList = parseGuestTxt(`
+葉玟廷, Wenting Yeh, 譚馥, Tanfu Denver
+陳瑜, Jennifer Chen, 陳瑜, Jennifer Chen
+徐慧恩, Esther Hsu, 李舜仁, Shawn Lee
+郭瑞璇, Fiona Kuo, 蕭方翊, Fang-I Hsiao
+徐嘉琪, Chessy Hsu, Jimmy Pan, Jimmy Pan
+朱邦洋, Brian Chu, 林子琳, Linda Lin
+張宇翔, Yu Hsan Chung, 張宇翔, Yu-Hsiang Chang
+陳映寰, Emily Chen, 趙偉旭, Wesley Chao
+Elaine, Elaine, 陳偉哲, David Chen
+周良彥, Leo Chou, 駱雁容, Cathy Luo
+陳主牧, Frank Chen, 陳主牧, Franklyn Chen
+吳芊曳, Angelina Wu, 夏承軒, Shelton Xia
+田姐, Tian, 男神, James
+官鴻彬, Benson Guan, 魏 Wesley, Wesley Wei
+        `.trim());
 
         const form      = document.getElementById('rsvpForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -1306,11 +1345,21 @@
 
         function matchName(input) {
             if (!input) return null;
-            const tokens = input.split(/\s+/).filter(Boolean);
-            for (const group of friendMappings) {
-                const firstMatch = tokens.some(t => fuzzyTokenMatch(t, group.firstNameAliases));
-                const lastMatch  = tokens.some(t => fuzzyTokenMatch(t, group.lastNameAliases));
-                if (firstMatch && lastMatch) return group.imageUrl;
+            const tokens = input.toLowerCase().split(/\s+/).filter(Boolean);
+
+            // First-name-only: find all guests whose given name matches any token
+            const givenOnly = guestList.filter(guest =>
+                guest.persons.some(person => tokens.some(t => fuzzyTokenMatch(t, person.given)))
+            );
+            if (givenOnly.length === 1) return imageOverrides[givenOnly[0].id] || defaultImageUrl;
+
+            // Ambiguous or no given match — require both given + family
+            for (const guest of guestList) {
+                for (const person of guest.persons) {
+                    const givenMatch  = tokens.some(t => fuzzyTokenMatch(t, person.given));
+                    const familyMatch = tokens.some(t => fuzzyTokenMatch(t, person.family));
+                    if (givenMatch && familyMatch) return imageOverrides[guest.id] || defaultImageUrl;
+                }
             }
             return null;
         }
