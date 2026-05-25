@@ -344,6 +344,7 @@
             .big-display { font-size: clamp(2.5rem, 16vw, 9rem); white-space: normal; }
         }
         @media (max-width: 768px) {
+            .hero-runway { height: 250vh; height: 250dvh; }
             .polaroid-card { width: 200px; padding: 12px 12px 30px; }
             .polaroid-card img { height: 240px; }
         }
@@ -848,6 +849,63 @@
             font-weight: 400;
             color: #a39171;
         }
+
+        /* ============================================
+           FAQ section
+           ============================================ */
+        .faq-section {
+            background-color: #f3f1ec;
+            padding: 100px 20px 120px;
+        }
+        .faq-inner {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .faq-headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 56px;
+        }
+        .faq-item {
+            border-top: 1px solid rgba(0,0,0,0.12);
+            padding: 24px 0;
+        }
+        .faq-item:last-child { border-bottom: 1px solid rgba(0,0,0,0.12); }
+        .faq-q {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            user-select: none;
+        }
+        .faq-q::after {
+            content: '+';
+            font-size: 1.4rem;
+            font-weight: 300;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+        }
+        .faq-item.open .faq-q::after { transform: rotate(45deg); }
+        .faq-a {
+            font-size: 0.92rem;
+            line-height: 1.75;
+            color: #444;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.25s ease;
+        }
+        .faq-item.open .faq-a {
+            max-height: 400px;
+            padding-top: 14px;
+        }
     </style>
 </head>
 <body>
@@ -859,9 +917,9 @@
         </a>
         
         <div class="links">
-            <a href="#dateRunway" onclick="document.getElementById('dateRunway').scrollIntoView({behavior:'smooth'}); return false;">Travel</a>
+            <!-- <a href="#dateRunway" onclick="document.getElementById('dateRunway').scrollIntoView({behavior:'smooth'}); return false;">Travel</a> -->
             <a href="#rsvp" onclick="document.getElementById('rsvp').scrollIntoView({behavior:'smooth'}); return false;">Registry</a>
-            <a href="#">FAQ</a>
+            <a href="#faq" onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'}); return false;">FAQ</a>
         </div>
         <a href="#rsvp" class="rsvp-pill">RSVP — July 15</a>
     </nav>
@@ -945,7 +1003,7 @@
             <div class="venue-details">
                 <p class="venue-label">Wedding Dinner</p>
                 <a href="https://theprogress-sf.com/" target="_blank" rel="noopener noreferrer" style="text-decoration: none;"><h3 class="venue-name">The Progress</h3></a>
-                <p class="venue-time">5:30 PM</p>
+                <p class="venue-time">6:00 PM</p>
 
                 <div class="venue-accolades">
                     <div class="michelin-badge">
@@ -1015,7 +1073,7 @@
                 </div>
 
                 <div class="form-group" id="ceremonyAttendGroup" style="display: none;">
-                    <label>Will you attend the ceremony?</label>
+                    <label>Will you attend the ceremony? <span style="font-weight:400;opacity:0.6;">@ City Hall, 3:00 PM</span></label>
                     <div class="radio-group">
                         <div class="radio-option">
                             <input type="radio" id="ceremonyYes" name="attendCeremony" value="Yes">
@@ -1029,7 +1087,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Will you attend the dinner?</label>
+                    <label>Will you attend the dinner? <span style="font-weight:400;opacity:0.6;">@ The Progress, 6:00 PM</span></label>
                     <div class="radio-group">
                         <div class="radio-option">
                             <input type="radio" id="dinnerYes" name="attendDinner" value="Yes" required>
@@ -1044,8 +1102,9 @@
 
                 <div class="form-group">
                     <label for="message">Leave a Note for Alvin &amp; Janice</label>
-                    <span class="sub-label">Your comment will be entered into a lucky draw for a prize at the dinner! Feel free to also note any food allergies or dietary restrictions.</span>
+                    <span class="sub-label">Anything you want to say to us — a memory, a wish, a roast. Feel free to also note any food allergies or dietary restrictions.</span>
                     <textarea id="message" name="message" placeholder="Share a memory, well wishes, or anything you'd like..." rows="3"></textarea>
+                    <span class="sub-label" style="margin-top:6px;display:block;">Your note will be entered into a lucky draw at the dinner — prize pool up to <strong>$1,000</strong>!</span>
                 </div>
 
                 <button type="submit" id="submitBtn">Send RSVP</button>
@@ -1054,6 +1113,47 @@
             <div id="success-message">
                 <p>Thank you!</p>
                 <p style="font-size: 1rem; color: #666; font-weight: 400; margin-top: 10px;">Your RSVP has been safely recorded.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="faq-section" id="faq">
+        <div class="faq-inner">
+            <h2 class="faq-headline reveal-item">FAQ</h2>
+            <p style="text-align:center; margin-bottom:40px; font-size:0.85rem; color:#888; line-height:1.6;">We'll be sending out a reminder email, based on the email you signed up with, one week before the event!</p>
+
+            <div class="faq-item">
+                <div class="faq-q">What's the dress code?</div>
+                <div class="faq-a">Summer Elegant · Formal Attire. Check the dress code section above for palette inspiration. Pastel tones — soft yellows, greens, blues, pinks — are especially welcome and encouraged.</div>
+            </div>
+            <div class="faq-item" id="faq-ceremony">
+                <div class="faq-q">Where is the ceremony?</div>
+                <div class="faq-a">San Francisco City Hall, 1 Dr Carlton B Goodlett Pl, San Francisco, CA 94102. The ceremony begins at 3:00 PM — please arrive a few minutes early.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Where is the dinner reception?</div>
+                <div class="faq-a">The Progress, 1525 Fillmore St, San Francisco, CA 94115. Dinner starts at 6:00 PM. The Progress is a Michelin-starred restaurant known for its family-style California cuisine.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Is there parking nearby?</div>
+                <div class="faq-a">
+                    <strong>Street Parking:</strong> The primary option is metered and unmetered street parking along Fillmore Street and surrounding blocks, though spaces can be difficult to find during dinner hours.<br><br>
+                    <strong>Nearby Garages:</strong> If street parking is full, nearby paid lots — such as the garage at The Fillmore Center — offer convenient backup options just a short walk away.<br><br>
+                    You can also use <a href="https://www.spotangels.com/san-francisco/restaurant/the-progress-parking" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;">SpotAngels</a> or SpotHero to find and reserve a spot in advance.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Do you have a gift registry?</div>
+                <div class="faq-a">Your presence is the greatest gift! If you'd like to contribute something, we will be extremely grateful.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What if I have dietary restrictions?</div>
+                <div class="faq-a">Please note any allergies or dietary restrictions in the message field when you RSVP — we'll make sure The Progress accommodates you.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What's the RSVP deadline?</div>
+                <div class="faq-a">Please RSVP by June 15, 2026 so we can finalize seating and catering. Use the form above or reach out to us directly.</div>
             </div>
         </div>
     </section>
@@ -1206,12 +1306,14 @@
             update();
         });
 
-        /* Ceremony section + RSVP question — visible only when URL contains ?c */
-        if (new URLSearchParams(window.location.search).has('c')) {
+        /* Ceremony section + RSVP question — visible by default, hidden when URL contains ?c=0 */
+        if (new URLSearchParams(window.location.search).get('c') !== '0') {
             document.getElementById('ceremonySection').classList.add('shown');
             const ceremonyGroup = document.getElementById('ceremonyAttendGroup');
             ceremonyGroup.style.display = '';
             document.getElementById('ceremonyYes').required = true;
+        } else {
+            document.getElementById('faq-ceremony').style.display = 'none';
         }
 
         /* ============================================
@@ -1235,25 +1337,25 @@
            Phase 3: form submit + friend-mapping easter egg
            ============================================ */
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyzEFbWL3hJ4HQRRsShJLcbcUQSIyLdSif3uciP_Q-Gf-LvZiPTzPOM3vVfVU43y_2T1A/exec';
-        const defaultImageUrl = "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+        const defaultImageUrl = "img/placeholder.jpg";
 
         let guestList = [];
 
         const imageOverrides = {
-            'wenting yeh':  'https://i.imgur.com/hyUWPLE.jpeg',
-            'jennifer chen':'https://i.imgur.com/ndlla6U.jpeg',
+            'wenting yeh':  'https://i.imgur.com/8UXvQEX.jpeg',
+            'jennifer chen':'https://i.imgur.com/IIH3dnn.jpeg',
+            'esther hsu':   'https://i.imgur.com/n9r9ZUY.jpeg',
             'fiona kuo':    'https://i.imgur.com/9g9iz8h.jpeg',
             'brian chu':    'https://i.imgur.com/4ZZATUE.jpeg',
             'yu hsan chung':'https://i.imgur.com/wBmtkKl.jpeg',
             'emily chen':   'https://i.imgur.com/TqWEXzb.jpeg',
             'elaine':       'https://i.imgur.com/Ezt8bIl.jpeg',
+            'leo chou':     'https://i.imgur.com/TmgLBRt.jpeg',
             'frank chen':   'https://i.imgur.com/syMxAXJ.jpeg',
-            'tian':         'https://i.imgur.com/uAFillY.jpeg',
             'benson guan':  'https://i.imgur.com/Yqj4IYG.jpeg',
-            'Esther': '#TVD',
-            'leo chou': 'https:///i.imgur.com/TmgLBRt.jpeg',
-            'frank chen': 'https://i.imgur.com/syMxAXJ.jpeg',
-            'tian': 'https://i.imgur.com/uAFillY.jpeg',
+            'angelina wu':  'https://i.imgur.com/uYpgcua.jpeg',
+            'chessy hsu':   'https://i.imgur.com/M7fBQ7b.jpeg',
+            'coco shih':    'https://i.imgur.com/1gcJYIW.jpeg',
         };
 
         function parsePersonAliases(chName, enName) {
@@ -1292,20 +1394,21 @@
         }
 
         guestList = parseGuestTxt(`
-葉玟廷, Wenting Yeh, 譚馥, Tanfu Denver
+葉玟廷, Wenting Yeh, 譚馥, Tanfu
 陳瑜, Jennifer Chen, 陳瑜, Jennifer Chen
 徐慧恩, Esther Hsu, 李舜仁, Shawn Lee
-郭瑞璇, Fiona Kuo, 蕭方翊, Fang-I Hsiao
+郭瑞璇, Fiona Kuo, 蕭方翊, Ian Fang-I Hsiao
 徐嘉琪, Chessy Hsu, Jimmy Pan, Jimmy Pan
 朱邦洋, Brian Chu, 林子琳, Linda Lin
 張宇翔, Yu Hsan Chung, 張宇翔, Yu-Hsiang Chang
 陳映寰, Emily Chen, 趙偉旭, Wesley Chao
-Elaine, Elaine, 陳偉哲, David Chen
-周良彥, Leo Chou, 駱雁容, Cathy Luo
-陳主牧, Frank Chen, 陳主牧, Franklyn Chen
+Elaine, Elaine, 陳緯哲, David Chen
+周良諺, Leo Chou, 駱雁容, Cathy Luo
+陳主牧, Frank Chen, 陳主牧, Zu-Mu Franklyn Zumu Chen
 吳芊曳, Angelina Wu, 夏承軒, Shelton Xia
-田姐, Tian, 男神, James
-官鴻彬, Benson Guan, 魏 Wesley, Wesley Wei
+官鴻彬, Benson Guan, Wesley Wei, Wesley Wei
+Coco shih, Coco shih, Coco, Coco
+廖珮妤, Rachel Liao,  陳律綺, Reichi Chen
         `.trim());
 
         const form      = document.getElementById('rsvpForm');
@@ -1421,6 +1524,16 @@ Elaine, Elaine, 陳偉哲, David Chen
                 submitBtn.disabled  = false;
                 submitBtn.innerText = "Error - Try Again";
                 alert("There was an issue submitting your RSVP. Please try again.");
+            });
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-q').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.parentElement;
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+                if (!isOpen) item.classList.add('open');
             });
         });
     </script>
