@@ -1440,9 +1440,15 @@ Coco shih, Coco shih, Coco, Coco
 
         function fuzzyTokenMatch(token, aliases) {
             return aliases.some(alias => {
-                if (token.includes(alias) || alias.includes(token)) return true;
-                const tolerance = alias.length <= 4 ? 1 : 2;
-                return editDistance(token, alias) <= tolerance;
+                const al = alias.toLowerCase();
+                if (token === al) return true;
+                // alias must be ≥4 chars to match as substring of token (prevents "yu" matching "yuchih")
+                if (al.length >= 4 && token.includes(al)) return true;
+                // only allow alias-contains-token if token is nearly as long (prevents "lai" matching "laine")
+                if (al.includes(token) && token.length >= al.length - 1) return true;
+                const shorter = Math.min(token.length, al.length);
+                const tolerance = shorter <= 3 ? 1 : al.length <= 5 ? 1 : 2;
+                return editDistance(token, al) <= tolerance;
             });
         }
 
