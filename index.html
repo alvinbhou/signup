@@ -1349,14 +1349,21 @@
             'brian chu':    'https://i.imgur.com/4ZZATUE.jpeg',
             'yu hsan chung':'https://i.imgur.com/wBmtkKl.jpeg',
             'emily chen':   'https://i.imgur.com/TqWEXzb.jpeg',
+            'ying-huan chen': 'https://i.imgur.com/TqWEXzb.jpeg',
             'elaine':       'https://i.imgur.com/Ezt8bIl.jpeg',
             'leo chou':     'https://i.imgur.com/TmgLBRt.jpeg',
             'frank chen':   'https://i.imgur.com/syMxAXJ.jpeg',
             'benson guan':  'https://i.imgur.com/Yqj4IYG.jpeg',
+            'guan hongbin':  'https://i.imgur.com/Yqj4IYG.jpeg',
             'angelina wu':  'https://i.imgur.com/uYpgcua.jpeg',
             'chessy hsu':   'https://i.imgur.com/M7fBQ7b.jpeg',
+            'chia-chi hsu': 'https://i.imgur.com/M7fBQ7b.jpeg',
             'coco shih':    'https://i.imgur.com/1gcJYIW.jpeg',
             'qianye wu':   'https://i.imgur.com/uYpgcua.jpeg',
+            'rachel liao': 'https://i.imgur.com/IJ0nti9.jpeg',
+            'peiyu liao':  'https://i.imgur.com/IJ0nti9.jpeg',
+            'heron yang': 'https://i.imgur.com/CAULiur.png'
+
         };
 
         function parsePersonAliases(chName, enName) {
@@ -1400,17 +1407,24 @@
 徐慧恩, Esther Hsu, 李舜仁, Shawn Lee
 郭瑞璇, Fiona Kuo, 蕭方翊, Ian Fang-I Hsiao
 徐嘉琪, Chessy Hsu, Jimmy Pan, Jimmy Pan
+徐嘉琪, Chia-Chi Hsu, Jimmy Pan, Jimmy Pan
 朱邦洋, Brian Chu, 林子琳, Linda Lin
 張宇翔, Yu Hsan Chung, 張宇翔, Yu-Hsiang Chang
 陳映寰, Emily Chen, 趙偉旭, Wesley Chao
+陳映寰, Ying-Huan Chen, 趙偉旭, WEI-HSU Chao
 Elaine, Elaine, 陳緯哲, David Chen
+Elaine, Elaine, 陳緯哲, Wei-Che Chen
 周良諺, Leo Chou, 駱雁容, Cathy Luo
 陳主牧, Frank Chen, 陳主牧, Zu-Mu Franklyn Zumu Chen
 吳芊曳, Angelina Wu, 夏承軒, Shelton Xia
 吳芊曳, Qianye Wu, 夏承軒, Chengxuan Xia
 官鴻彬, Benson Guan, Wesley Wei, Wesley Wei
-Coco shih, Coco shih, Coco, Coco
+官鴻彬, GUAN HONGBIN, Wesley Wei, Wesley Wei
+Coco shih, Coco shih, Futzu Shih, Futzu Shih
 廖珮妤, Rachel Liao,  陳律綺, Reichi Chen
+廖珮妤, Peiyu Liao,  陳律綺, Reichi Chen
+朱邦洋, Pang-Yang Chu, 林子琳, Tzu-Lin Lin
+Heron Yang, Heron Yang, Yi-Hsuan Chen, Yi Hsuan Chen
         `.trim());
 
         const form      = document.getElementById('rsvpForm');
@@ -1443,26 +1457,27 @@ Coco shih, Coco shih, Coco, Coco
         function fuzzyTokenMatch(token, aliases) {
             return aliases.some(alias => {
                 const al = alias.toLowerCase();
-                if (token === al) return true;
-                // alias must be ≥4 chars to match as substring of token (prevents "yu" matching "yuchih")
-                if (al.length >= 4 && token.includes(al)) return true;
-                // only allow alias-contains-token if token is nearly as long (prevents "lai" matching "laine")
-                if (al.includes(token) && token.length >= al.length - 1) return true;
-                const shorter = Math.min(token.length, al.length);
-                const tolerance = shorter <= 3 ? 1 : al.length <= 5 ? 1 : 2;
-                return editDistance(token, al) <= tolerance;
+                return token === al || editDistance(token, al) <= 1;
             });
         }
+
+        // Common surnames that should not trigger the first-name-only heuristic —
+        // their presence signals user is typing a full name, so require given + family.
+        const SURNAME_TOKENS = new Set(['chen', 'wu']);
 
         function matchName(input) {
             if (!input) return null;
             const tokens = input.toLowerCase().split(/\s+/).filter(Boolean);
+            const hasSurnameToken = tokens.some(t => SURNAME_TOKENS.has(t));
 
-            // First-name-only: find all guests whose given name matches any token
-            const givenOnly = guestList.filter(guest =>
-                guest.persons.some(person => tokens.some(t => fuzzyTokenMatch(t, person.given)))
-            );
-            if (givenOnly.length === 1) return imageOverrides[givenOnly[0].id] || defaultImageUrl;
+            // First-name-only: find all guests whose given name matches any token.
+            // Skip when input contains a common surname (e.g. "Chen Yu", "Qianye Wu").
+            if (!hasSurnameToken) {
+                const givenOnly = guestList.filter(guest =>
+                    guest.persons.some(person => tokens.some(t => fuzzyTokenMatch(t, person.given)))
+                );
+                if (givenOnly.length === 1) return imageOverrides[givenOnly[0].id] || defaultImageUrl;
+            }
 
             // Ambiguous or no given match — require both given + family
             for (const guest of guestList) {
@@ -1474,6 +1489,54 @@ Coco shih, Coco shih, Coco, Coco
             }
             return null;
         }
+
+        // TEST — comment out to disable
+        (function runMatchTests() {
+            const cases = [
+                ['Wenting Yeh','wenting yeh'], ['Wenting','wenting yeh'],
+                ['Jennifer Chen','jennifer chen'], ['Jennifer','jennifer chen'],
+                ['Esther Hsu','esther hsu'], ['Esther','esther hsu'],
+                ['Fiona Kuo','fiona kuo'], ['Fiona','fiona kuo'],
+                ['Chessy Hsu','chessy hsu'], ['Chessy','chessy hsu'],
+                ['Brian Chu','brian chu'], ['Brian','brian chu'],
+                ['Yu Hsan Chung','yu hsan chung'], ['Yu','yu hsan chung'],
+                ['Emily Chen','emily chen'], ['Emily','emily chen'],
+                ['Elaine','elaine'], ['Leo Chou','leo chou'], ['Leo','leo chou'],
+                ['Frank Chen','frank chen'], ['Frank','frank chen'],
+                ['Angelina Wu','angelina wu'], ['Angelina','angelina wu'],
+                ['Benson Guan','benson guan'], ['Benson','benson guan'],
+                ['Coco shih','coco shih'], ['Coco','coco shih'],
+                ['Rachel Liao','DEFAULT'],
+                ['Tanfu','wenting yeh'], ['Shawn Lee','esther hsu'], ['Shawn','esther hsu'],
+                ['Ian Hsiao','fiona kuo'], ['Ian','fiona kuo'],
+                ['Jimmy Pan','chessy hsu'], ['Jimmy','chessy hsu'],
+                ['Linda Lin','brian chu'], ['Linda','brian chu'],
+                ['Yu-Hsiang Chang','yu hsan chung'],
+                ['Wesley Chao','emily chen'], ['David Chen','elaine'], ['David','elaine'],
+                ['Cathy Luo','leo chou'], ['Cathy','leo chou'],
+                ['Franklyn','frank chen'], ['Zumu','frank chen'],
+                ['Shelton Xia','angelina wu'], ['Shelton','angelina wu'],
+                ['Wesley Wei','benson guan'], ['Reichi Chen','DEFAULT'],
+                ['Wesley','NULL'],
+                ['葉玟廷','wenting yeh'], ['蕭方翊','fiona kuo'],
+                // should NOT match anyone
+                ['Jenyi Lai','NULL'], ['Yuchih Hou','NULL'],
+                ['Allison Hou','NULL'], ['Heron','NULL'],
+                ['Chengxuan Xia','NULL'], ['Qianye Wu','NULL'],
+                ['Wu','NULL'], ['Xia','NULL'], ['Chen','NULL'], ['Chen Yu','NULL'],
+            ];
+            let pass = 0, fail = 0;
+            cases.forEach(([input, key]) => {
+                const result = matchName(input);
+                const expected = key === 'NULL' ? null : key === 'DEFAULT' ? defaultImageUrl : imageOverrides[key];
+                if (result === expected) { pass++; }
+                else {
+                    fail++;
+                    console.warn(`FAIL  "${input}"\n  expected: ${expected}\n  got:      ${result}`);
+                }
+            });
+            console.log(`%cmatchName tests: ${pass} passed, ${fail} failed`, fail ? 'color:red;font-weight:bold' : 'color:green;font-weight:bold');
+        })();
 
         form.addEventListener('submit', e => {
             e.preventDefault();
